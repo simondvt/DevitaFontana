@@ -5,13 +5,13 @@ sig Location { // a location is identified via latitude and langitude
 	longitude: one Int
 }
 
-sig Zone { // a zone is identified via its location
+sig Zone { // a zone is identified via the set of its locations
 	locations: some Location
 }
 
 sig Segnalation { // a location is composed of a location and its type
-	location:			one Location,
-	typeOfViolation: one String
+	location:			one Location//,
+	//typeOfViolation: one String
 }
 
 sig Solution { // a solution includes a set of segnalations that occurred in a zone
@@ -26,7 +26,7 @@ sig Municipality extends User {
 }
 
 sig NormalUser extends User { 
-	email:			String,
+	//email:			String,
 	segnalations: set Segnalation // set = 0 o più
 }
 
@@ -37,7 +37,7 @@ sig NormalUser extends User {
 
 // normal users sign up with different emails
 fact usersWithDifferentEmail {
-	no disj u1, u2: NormalUser | u1.email = u2.email
+	//no disj u1, u2: NormalUser | u1.email = u2.email
 }
 
 // each segnalation is associated to a single normal user
@@ -72,7 +72,7 @@ fact differentMunicipalityZones {
 	no disj m1, m2: Municipality | m1.zones & m2.zones != none
 }
 
-// a location belongs to only one Zone
+// each location belongs to only one Zone
 fact locationBelongsToOneZone {
 	all location: Location | one  zone: Zone | location in zone.locations
 }
@@ -82,10 +82,22 @@ fact zoneBelongsToMunicipality {
 	all zone: Zone | some municipality: Municipality | zone in municipality.zones
 }
 
+// each segnalation belongs to 0 or 1 solution
+fact segnalationBelongsToMax1Solution {
+	all segnalation: Segnalation | lone solution: Solution | segnalation in solution.segnalations
+}
+
+// each segnalation is associated to a NormalUser
+fact segnalationAssociatedToNormalUser {
+	all segnalation: Segnalation | one user: NormalUser | segnalation in user.segnalations
+}
+
 /// ~facts ///
 
 /// worlds ///
+pred show {
 
-run {}
+}
+run show 
 
 /// ~worlds ///
