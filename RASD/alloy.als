@@ -10,7 +10,7 @@ sig TypeOfViolation { // Segnalation's typeOfViolation
 sig Location { // a location is identified via latitude and langitude
 	latitude:		one Int,
 	longitude: one Int
-}
+} 
 
 sig Zone { // a zone is identified via the set of its locations
 	locations: some Location
@@ -70,7 +70,7 @@ fact segnalationsInSolutionSameZone {
 }
 
 // all segnalations that triggered a solution concern the same type of violation
-fact segnalationsInSolutionSameZone {
+fact segnalationsInSolutionConcernSameTypeOfViolation {
 	all solution:Solution | all segnalation: solution.segnalations
 		| some tov: TypeOfViolation | segnalation.typeOfViolation = tov and solution.typeOfViolation = tov
 }
@@ -108,10 +108,29 @@ fact segnalationAssociatedToNormalUser {
 
 /// ~facts ///
 
-/// worlds ///
-pred show {
+/// assertions ///
 
+assert SolutionToOneMunicipality { // a solution must be sent to only one municipality
+	no disj m1, m2: Municipality | some s: Solution | s in m1.solutions and s in m2.solutions
 }
-run show 
+
+check SolutionToOneMunicipality
+
+/// ~assertions ///
+
+/// worlds ///
+pred world1 {
+	(#Municipality = 1) and
+	(#NormalUser = 3) and (all u: NormalUser | u.segnalations != none) and
+	(#Zone > 2)
+}
+
+pred world2 {
+	(#Municipality = 2) and
+	(#NormalUser >=  2)  and
+	(all m: Municipality | m.solutions != none)
+}
+
+run world2 for 4
 
 /// ~worlds ///
