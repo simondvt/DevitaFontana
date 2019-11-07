@@ -59,7 +59,7 @@ fact municipalityHasItsZonesSegnalations {
 
 // each normal user has the segnalations he sent
 fact normalUserHasSegnalationsHeSent {
-	all u: NormalUser | all s: Segnalation | 
+	all u: NormalUser, s: Segnalation | 
 		s.email = u.email implies s in u.segnalations
 }
 
@@ -150,9 +150,9 @@ assert SolutionToOneMunicipality { // a solution must be sent to only one munici
 
 /// worlds ///
 pred world1 {
-	(#Municipality = 1) and
-	(#NormalUser = 3) and (all u: NormalUser | u.segnalations != none) and
-	(#Zone > 2)
+	(#Municipality > 1) and
+	(some m: Municipality | m.registered = False) and
+	(#Segnalation > 0)
 }
 
 pred world2 {
@@ -161,6 +161,6 @@ pred world2 {
 	(all m: Municipality | m.solutions != none)
 }
 
-run world2 for 4
+run world1 for 3
 
 /// ~worlds ///
